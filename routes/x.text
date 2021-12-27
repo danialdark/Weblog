@@ -1,0 +1,91 @@
+<?php
+
+    use App\Http\Controllers\CategoryController;
+    use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\Route;
+    use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\SubCategoryController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+    Auth::routes();
+    route::get("/",function(){
+        return redirect()->route("home");
+    });
+    Route::prefix('home')->group(function () {
+        route::get("/", [HomeController::class, "index"])->name("home");
+        Route::prefix('category')->group(function () {
+            route::get("/", [CategoryController::class, "index"])->name("home.category");
+            Route::prefix('news')->group(function () {
+                route::get("/", [CategoryController::class, "news"])->name("home.category.news");
+                route::get("/politic", [PostController::class, "politic"])->name("home.category.news.politic");
+                route::get("/finance", [PostController::class, "finance"])->name("home.category.news.finance");
+            });
+            Route::prefix('tech')->group(function () {
+                route::get("/", [CategoryController::class, "tech"])->name("home.category.tech");
+                route::get("/mobile", [PostController::class, "mobile"])->name("home.category.tech.mobile");
+                route::get("/pc", [PostController::class, "pc"])->name("home.category.tech.pc");
+            });
+            Route::prefix('lifestyle')->group(function () {
+                route::get("/", [CategoryController::class, "lifestyle"])->name("home.category.lifestyle");
+                route::get("/food", [PostController::class, "food"])->name("home.category.lifestyle.food");
+                route::get("/travel", [PostController::class, "travel"])->name("home.category.lifestyle.finance");
+            });
+            Route::prefix('fashion')->group(function () {
+                route::get("/", [CategoryController::class, "fashion"])->name("home.category.fashion");
+                route::get("/hat", [PostController::class, "hat"])->name("home.category.fashion.hat");
+                route::get("/shoes", [PostController::class, "shoes"])->name("home.category.fashion.shoes");
+            });
+            Route::prefix('art')->group(function () {
+                route::get("/", [CategoryController::class, "art"])->name("home.category.art");
+                route::get("/abstract", [PostController::class, "abstract"])->name("home.category.art.abstract");
+                route::get("/street", [PostController::class, "street"])->name("home.category.art.street");
+            });
+            Route::prefix('art')->group(function () {
+                route::get()
+            })
+            
+        });
+    });
+    route::prefix("admin")->middleware(["admin","auth"])->group(function(){
+        route::get("/",[AdminController::class,"index"])->name("admin.home");
+        route::prefix("category")->group(function(){
+            Route::get('/all', [CategoryController::class, 'all'])->name('admin.content.category.all');
+            Route::get('/create', [CategoryController::class, 'create'])->name('admin.content.category.create');
+            Route::post('/store', [CategoryController::class, 'store'])->name('admin.content.category.store');
+            Route::get('/edit/{id}', [CategoryController::class, 'edit'])->name('admin.content.category.edit');
+            Route::put('/update/{id}', [CategoryController::class, 'update'])->name('admin.content.category.update');
+            Route::delete('/destroy/{id}', [CategoryController::class, 'destroy'])->name('admin.content.category.destroy');
+        });
+        route::prefix("subcategory")->group(function(){
+            Route::get('/all', [SubCategoryController::class, 'all'])->name('admin.content.subcategory.all');
+            Route::get('/create', [SubCategoryController::class, 'create'])->name('admin.content.subcategory.create');
+            Route::post('/store', [SubCategoryController::class, 'store'])->name('admin.content.subcategory.store');
+            Route::get('/edit/{id}', [SubCategoryController::class, 'edit'])->name('admin.content.subcategory.edit');
+            Route::put('/update/{id}', [SubCategoryController::class, 'update'])->name('admin.content.subcategory.update');
+            Route::delete('/destroy/{id}', [SubCategoryController::class, 'destroy'])->name('admin.content.subcategory.destroy');
+        });
+        route::prefix("posts")->group(function(){
+            Route::get('/all', [PostController::class, 'all'])->name('admin.content.posts.all');
+
+            Route::get('/create', [PostController::class, 'create'])->name('admin.content.posts.create');
+            Route::post('/store', [PostController::class, 'store'])->name('admin.content.posts.store');
+            Route::get('/image', [PostController::class, 'image'])->name('admin.content.posts.image');
+            Route::get('/edit/{id}', [PostController::class, 'edit'])->name('admin.content.posts.edit');
+            Route::put('/update/{id}', [PostController::class, 'update'])->name('admin.content.posts.update');
+            Route::delete('/destroy/{id}', [PostController::class, 'destroy'])->name('admin.content.posts.destroy');
+        });
+       
+    });
